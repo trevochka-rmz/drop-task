@@ -1,0 +1,19 @@
+.app {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.app h1 {
+    text-align: center;
+    color: #333;
+}
+
+/* Стили для скролла */
+#scrollableDiv {
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 20px;
+}
