@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3001/api';
+const API_URL = 'https://drop-task-backend.onrender.com/api';
 
 // Логирование запросов
 const logRequest = (method, endpoint, data) => {
