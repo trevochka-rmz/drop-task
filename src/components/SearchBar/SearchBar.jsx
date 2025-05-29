@@ -5,24 +5,32 @@ const SearchBar = ({ onSearch }) => {
     const [inputValue, setInputValue] = useState('');
     const [debouncedValue, setDebouncedValue] = useState('');
 
-    // Дебаунс для поиска (задержка 300мс)
+    // Дебаунс для уменьшения количества запросов при вводе
     useEffect(() => {
+        console.log('Search input changed:', inputValue);
         const timer = setTimeout(() => {
+            console.log('Debounced search:', inputValue);
             setDebouncedValue(inputValue);
         }, 300);
 
         return () => {
+            console.log('Clearing search timeout');
             clearTimeout(timer);
         };
     }, [inputValue]);
 
-    // Вызываем поиск после дебаунса
     useEffect(() => {
+        console.log('Triggering search for:', debouncedValue);
         onSearch(debouncedValue);
     }, [debouncedValue, onSearch]);
 
     const handleChange = (e) => {
         setInputValue(e.target.value);
+    };
+
+    const handleClear = () => {
+        setInputValue('');
+        setDebouncedValue('');
     };
 
     const handleSubmit = (e) => {
@@ -45,7 +53,7 @@ const SearchBar = ({ onSearch }) => {
                     <button
                         type="button"
                         className="clear-button"
-                        onClick={() => setInputValue('')}
+                        onClick={handleClear}
                         aria-label="Clear search"
                     >
                         ×
