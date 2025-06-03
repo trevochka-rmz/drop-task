@@ -20,7 +20,6 @@ function App() {
     const [selectedCount, setSelectedCount] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
 
-    // Загрузка данных
     const loadItems = useCallback(
         async (reset = false) => {
             if (isLoading) {
@@ -71,8 +70,7 @@ function App() {
                 );
             } catch (error) {
                 console.error('Failed to load items:', error);
-                // Показываем ошибку пользователю
-                setItems([]); // Очищаем список при ошибке
+                setItems([]);
                 setHasMore(false);
             } finally {
                 setIsLoading(false);
@@ -80,6 +78,7 @@ function App() {
         },
         [page, searchTerm, isLoading]
     );
+
     useEffect(() => {
         console.log('App State Update:', {
             itemsCount: items.length,
@@ -89,7 +88,7 @@ function App() {
             selectedCount,
         });
     }, [items, page, hasMore, searchTerm, selectedCount]);
-    // Загрузка начального состояния
+
     useEffect(() => {
         const initApp = async () => {
             try {
@@ -105,7 +104,6 @@ function App() {
         initApp();
     }, []);
 
-    // Обработчик поиска
     const handleSearch = (term) => {
         console.log('Search term changed:', term);
         setSearchTerm(term);
@@ -114,7 +112,6 @@ function App() {
         loadItems(true);
     };
 
-    // Обработчик выбора элемента
     const handleSelect = async (id, selected) => {
         try {
             await updateSelection(id, selected);
@@ -129,7 +126,6 @@ function App() {
         }
     };
 
-    // Обработчик массового выбора
     const handleSelectMultiple = async (ids, selected) => {
         try {
             await updateMultipleSelections(ids, selected);
@@ -146,7 +142,6 @@ function App() {
         }
     };
 
-    // Обработчик перетаскивания
     const handleDragEnd = async (result) => {
         setIsDragging(false);
 
@@ -201,6 +196,7 @@ function App() {
                         loader={
                             <div className="loader">Loading more items...</div>
                         }
+                        scrollableTarget="scrollable-container"
                         endMessage={
                             <p style={{ textAlign: 'center' }}>
                                 No more items to load

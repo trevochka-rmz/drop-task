@@ -5,7 +5,6 @@ const SearchBar = ({ onSearch }) => {
     const [inputValue, setInputValue] = useState('');
     const [debouncedValue, setDebouncedValue] = useState('');
 
-    // Дебаунс для уменьшения количества запросов при вводе
     useEffect(() => {
         console.log('Search input changed:', inputValue);
         const timer = setTimeout(() => {
@@ -21,7 +20,6 @@ const SearchBar = ({ onSearch }) => {
 
     useEffect(() => {
         console.log('Triggering search for:', debouncedValue);
-        if (debouncedValue !== inputValue) return;
         onSearch(debouncedValue);
     }, [debouncedValue, onSearch]);
 
@@ -32,11 +30,12 @@ const SearchBar = ({ onSearch }) => {
     const handleClear = () => {
         setInputValue('');
         setDebouncedValue('');
+        onSearch('');
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSearch(inputValue);
+        setDebouncedValue(inputValue);
     };
 
     return (
