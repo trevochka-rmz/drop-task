@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { DragDropContext } from '@hello-pangea/dnd';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { fetchItems, fetchState, updateSelection } from './api/api.js';
+import {
+    fetchItems,
+    fetchState,
+    updateSelection,
+    updateMultipleSelections,
+    updateOrder,
+} from './api/api.js';
 import SearchBar from './components/SearchBar/SearchBar.jsx';
 import './App.css';
 
@@ -11,6 +18,7 @@ function App() {
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [selectedCount, setSelectedCount] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
 
     const loadItems = useCallback(
         async (reset = false) => {
@@ -96,18 +104,14 @@ function App() {
         initApp();
     }, []);
 
-    const handleSearch = useCallback(
-        (term) => {
-            console.log('Search term changed:', term);
-            if (term === searchTerm) return; // Избегаем повторных вызовов
-            setSearchTerm(term);
-            setItems([]); // Обнуляем список
-            setPage(1);
-            setHasMore(true);
-            loadItems(true);
-        },
-        [searchTerm]
-    );
+    const handleSearch = useCallback((term) => {
+        console.log('Search term changed:', term);
+        setSearchTerm(term);
+        setItems([]); // Обнуляем список
+        setPage(1);
+        setHasMore(true);
+        loadItems(true);
+    }, []);
 
     const handleSelect = async (id, selected) => {
         try {
@@ -120,6 +124,39 @@ function App() {
             setSelectedCount((prev) => (selected ? prev + 1 : prev - 1));
         } catch (error) {
             console.error('Failed to update selection:', error);
+        }
+    };
+
+    const handleSelectMultiple = async (ids, selected) => {
+        try {
+            await updateMultipleSelections(ids, selected);
+            setItems((prev) =>
+                prev.map((item) =>
+                    ids.includes(item.id) ? { ...item, selected } : item
+                )
+            );
+            setSelectedCount((prev) =>
+                selected ? prev + ids.length : prev - ids.length
+            );
+        } catch (error) {
+            console.error('Failed to update multiple selections:', error);
+        }
+    };
+
+    const handleDragEnd = async (result) => {
+        setIsDragging(false);
+        if (!result.destination) return;
+
+        const newItems = Array.from(items);
+        const [movedItem] = newItems.splice(result.source.index, 1);
+        newItems.splice(result.destination.index, 0, movedItem);
+
+        setItems(newItems);
+
+        try {
+            await updateOrder(newItems.map((item) => item.id));
+        } catch (error) {
+            console.error('Failed to update order:', error);
         }
     };
 
@@ -138,57 +175,76 @@ function App() {
                 <p>HasMore: {hasMore.toString()}</p>
             </div>
             <SearchBar onSearch={handleSearch} />
-            <div id="scrollable-container" className="items-container">
-                <InfiniteScroll
-                    dataLength={items.length}
-                    next={() => {
-                        console.log(
-                            'InfiniteScroll: Triggering next, page:',
-                            page,
-                            'hasMore:',
-                            hasMore
-                        );
-                        loadItems();
-                    }}
-                    hasMore={hasMore}
-                    loader={<div className="loader">Loading more items...</div>}
-                    scrollableTarget="scrollable-container"
-                    endMessage={
-                        <p style={{ textAlign: 'center' }}>
-                            No more items to load
-                        </p>
-                    }
-                    onScroll={() => console.log('InfiniteScroll: Scrolling')}
-                >
-                    {items.length === 0 && !isLoading && searchTerm ? (
-                        <div className="empty-message">
-                            No items match your search
-                        </div>
-                    ) : items.length === 0 && !isLoading ? (
-                        <div className="error-message">
-                            Failed to load items.
-                        </div>
-                    ) : (
-                        items.map((item) => (
-                            <div
-                                key={item.id}
-                                className={`item ${
-                                    item.selected ? 'selected' : ''
-                                }`}
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={item.selected}
-                                    onChange={(e) =>
-                                        handleSelect(item.id, e.target.checked)
-                                    }
-                                />
-                                <span>{item.text}</span>
+            <DragDropContext
+                onDragStart={() => setIsDragging(true)}
+                onDragEnd={handleDragEnd}
+            >
+                <div id="scrollable-container" className="items-container">
+                    <InfiniteScroll
+                        dataLength={items.length}
+                        next={() => {
+                            console.log(
+                                'InfiniteScroll: Triggering next, page:',
+                                page,
+                                'hasMore:',
+                                hasMore
+                            );
+                            loadItems();
+                        }}
+                        hasMore={hasMore}
+                        loader={
+                            <div className="loader">Loading more items...</div>
+                        }
+                        scrollableTarget="scrollable-container"
+                        endMessage={
+                            <p style={{ textAlign: 'center' }}>
+                                No more items to load
+                            </p>
+                        }
+                        onScroll={() =>
+                            console.log('InfiniteScroll: Scrolling')
+                        }
+                    >
+                        {items.length === 0 && !isLoading && searchTerm ? (
+                            <div className="empty-message">
+                                No items match your search
                             </div>
-                        ))
-                    )}
-                </InfiniteScroll>
-            </div>
+                        ) : items.length === 0 && !isLoading ? (
+                            <div className="error-message">
+                                Failed to load items.
+                            </div>
+                        ) : (
+                            items.map((item, index) => (
+                                <div
+                                    key={item.id}
+                                    className={`item ${
+                                        item.selected ? 'selected' : ''
+                                    } ${isDragging ? 'dragging' : ''}`}
+                                    draggable
+                                    onDragStart={(e) =>
+                                        e.dataTransfer.setData(
+                                            'text/plain',
+                                            index
+                                        )
+                                    }
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={item.selected}
+                                        onChange={(e) =>
+                                            handleSelect(
+                                                item.id,
+                                                e.target.checked
+                                            )
+                                        }
+                                    />
+                                    <span>{item.text}</span>
+                                </div>
+                            ))
+                        )}
+                    </InfiniteScroll>
+                </div>
+            </DragDropContext>
         </div>
     );
 }

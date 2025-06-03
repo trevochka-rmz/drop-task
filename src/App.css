@@ -17,7 +17,7 @@
 }
 
 .items-container {
-    height: 400px; /* Уменьшил для гарантии прокрутки */
+    height: 400px;
     overflow-y: auto;
     padding: 10px;
     border: 1px solid #ccc;
@@ -35,6 +35,7 @@
     height: 60px;
     font-size: 16px;
     box-sizing: border-box;
+    cursor: move;
 }
 
 .item:hover {
@@ -43,6 +44,11 @@
 
 .item.selected {
     background-color: #e6f2ff;
+}
+
+.item.dragging {
+    background-color: #d4e5ff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .item input[type='checkbox'] {

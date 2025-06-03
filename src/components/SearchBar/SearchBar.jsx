@@ -4,19 +4,6 @@ import './SearchBar.css';
 function SearchBar({ onSearch }) {
     const [inputValue, setInputValue] = useState('');
 
-    useEffect(() => {
-        console.log('Input changed:', inputValue);
-        const timer = setTimeout(() => {
-            console.log('Debounced search:', inputValue);
-            onSearch(inputValue);
-        }, 500);
-
-        return () => {
-            console.log('Clearing timeout');
-            clearTimeout(timer);
-        };
-    }, [inputValue, onSearch]);
-
     const handleChange = (e) => {
         setInputValue(e.target.value);
     };
@@ -29,8 +16,21 @@ function SearchBar({ onSearch }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('Search button clicked:', inputValue);
-        onSearch(inputValue); // Немедленный поиск
+        onSearch(inputValue);
     };
+
+    useEffect(() => {
+        console.log('Input changed:', inputValue);
+        const timer = setTimeout(() => {
+            console.log('Debounced search:', inputValue);
+            onSearch(inputValue);
+        }, 500);
+
+        return () => {
+            console.log('Clearing timeout');
+            clearTimeout(timer);
+        };
+    }, [inputValue, onSearch]);
 
     return (
         <form onSubmit={handleSubmit} className="search-bar">

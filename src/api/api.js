@@ -29,8 +29,20 @@ export const fetchItems = (page, limit = 20, search = '') => {
 
 export const fetchState = () => fetchApi('/state');
 
+export const updateOrder = (order) =>
+    fetchApi('/update-order', {
+        method: 'POST',
+        body: JSON.stringify({ order }),
+    });
+
 export const updateSelection = (id, selected) =>
     fetchApi('/update-selection', {
         method: 'POST',
         body: JSON.stringify({ id, selected }),
+    });
+
+export const updateMultipleSelections = (ids, selected) =>
+    fetchApi('/update-selection', {
+        method: 'POST',
+        body: JSON.stringify({ ids, selected }),
     });
