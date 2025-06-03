@@ -36,8 +36,12 @@ function App() {
 
             try {
                 const data = await fetchItems(currentPage, 20, searchTerm);
-                console.log('Received items:', data.items.length);
-
+                console.log('Fetched data:', {
+                    items: data.items.length,
+                    total: data.total,
+                    hasMore: data.hasMore,
+                    page: data.page,
+                });
                 setItems((prev) => {
                     const newItems = reset
                         ? data.items
@@ -45,7 +49,6 @@ function App() {
                     console.log(`Items updated: ${newItems.length} total`);
                     return newItems;
                 });
-
                 setPage(currentPage + 1);
                 setHasMore(data.hasMore);
                 console.log(
@@ -53,12 +56,6 @@ function App() {
                         data.hasMore
                     }`
                 );
-
-                // Сбрасываем ключ скролла при новом поиске
-                if (reset) {
-                    // setScrollKey((prev) => prev + 1);
-                    console.log('Scroll key reset');
-                }
             } catch (error) {
                 console.error('Failed to load items:', error);
             } finally {
@@ -176,7 +173,15 @@ function App() {
                 <div id="scrollable-container" className="items-container">
                     <InfiniteScroll
                         dataLength={items.length}
-                        next={loadItems}
+                        next={() => {
+                            console.log(
+                                'InfiniteScroll: Triggering next, page:',
+                                page,
+                                'hasMore:',
+                                hasMore
+                            );
+                            loadItems();
+                        }}
                         hasMore={hasMore}
                         loader={
                             <div className="loader">Loading more items...</div>
