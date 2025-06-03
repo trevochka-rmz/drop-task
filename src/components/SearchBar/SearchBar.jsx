@@ -3,25 +3,19 @@ import './SearchBar.css';
 
 const SearchBar = ({ onSearch }) => {
     const [inputValue, setInputValue] = useState('');
-    const [debouncedValue, setDebouncedValue] = useState('');
 
     useEffect(() => {
         console.log('Search input changed:', inputValue);
         const timer = setTimeout(() => {
             console.log('Debounced search:', inputValue);
-            setDebouncedValue(inputValue);
+            onSearch(inputValue);
         }, 300);
 
         return () => {
             console.log('Clearing search timeout');
             clearTimeout(timer);
         };
-    }, [inputValue]);
-
-    useEffect(() => {
-        console.log('Triggering search for:', debouncedValue);
-        onSearch(debouncedValue);
-    }, [debouncedValue, onSearch]);
+    }, [inputValue, onSearch]);
 
     const handleChange = (e) => {
         setInputValue(e.target.value);
@@ -29,13 +23,12 @@ const SearchBar = ({ onSearch }) => {
 
     const handleClear = () => {
         setInputValue('');
-        setDebouncedValue('');
         onSearch('');
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setDebouncedValue(inputValue);
+        onSearch(inputValue);
     };
 
     return (
