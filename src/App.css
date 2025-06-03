@@ -21,7 +21,7 @@
 /* Стили для списка элементов */
 .items-container {
     margin-top: 20px;
-    max-height: 60vh; /* Или 500px, подберите под ваш дизайн */
+    height: 500px; /* Или 500px, подберите под ваш дизайн */
     overflow-y: auto;
     padding: 10px;
     border: 1px solid #ccc; /* Для отладки */

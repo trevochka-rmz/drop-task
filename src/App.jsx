@@ -190,7 +190,11 @@ function App() {
                         loader={
                             <div className="loader">Loading more items...</div>
                         }
-                        scrollableTarget="scrollable-container"
+                        endMessage={
+                            <p style={{ textAlign: 'center' }}>
+                                No more items to load
+                            </p>
+                        }
                     >
                         {items.length === 0 && !isLoading && searchTerm ? (
                             <div className="empty-message">
