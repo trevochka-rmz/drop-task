@@ -1,4 +1,4 @@
-const API_URL = 'drop-task-backend-production-b4d7.up.railway.app/api';
+const API_URL = 'drop-task-backend.railway.internal/api';
 // const API_URL = 'https://drop-task-backend.onrender.com/api';
 
 // Обертка для fetch с обработкой ошибок
