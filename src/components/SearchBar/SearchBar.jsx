@@ -5,14 +5,14 @@ function SearchBar({ onSearch }) {
     const [inputValue, setInputValue] = useState('');
 
     useEffect(() => {
-        console.log('Search input changed:', inputValue);
+        console.log('Input changed:', inputValue);
         const timer = setTimeout(() => {
             console.log('Debounced search:', inputValue);
             onSearch(inputValue);
-        }, 500); // Увеличил до 500ms
+        }, 500);
 
         return () => {
-            console.log('Clearing search timeout');
+            console.log('Clearing timeout');
             clearTimeout(timer);
         };
     }, [inputValue, onSearch]);
@@ -28,7 +28,8 @@ function SearchBar({ onSearch }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSearch(inputValue);
+        console.log('Search button clicked:', inputValue);
+        onSearch(inputValue); // Немедленный поиск
     };
 
     return (

@@ -101,6 +101,7 @@ function App() {
             console.log('Search term changed:', term);
             if (term === searchTerm) return; // Избегаем повторных вызовов
             setSearchTerm(term);
+            setItems([]); // Обнуляем список
             setPage(1);
             setHasMore(true);
             loadItems(true);
