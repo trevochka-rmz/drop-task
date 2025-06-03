@@ -30,7 +30,7 @@ function SearchBar({ onSearch }) {
             console.log('Clearing timeout');
             clearTimeout(timer);
         };
-    }, [inputValue, onSearch]);
+    }, [inputValue]);
 
     return (
         <form onSubmit={handleSubmit} className="search-bar">

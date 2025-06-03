@@ -21,7 +21,7 @@ function App() {
     const [isDragging, setIsDragging] = useState(false);
 
     const loadItems = useCallback(
-        async (reset = false) => {
+        async (reset = false, search = searchTerm) => {
             if (isLoading) {
                 console.log('Load items skipped: already loading');
                 return;
@@ -29,12 +29,12 @@ function App() {
 
             const currentPage = reset ? 1 : page;
             console.log(
-                `Loading items: reset=${reset}, page=${currentPage}, search="${searchTerm}"`
+                `Loading items: reset=${reset}, page=${currentPage}, search="${search}"`
             );
             setIsLoading(true);
 
             try {
-                const data = await fetchItems(currentPage, 20, searchTerm);
+                const data = await fetchItems(currentPage, 20, search);
                 console.log('Fetched data:', {
                     items: data.items.length,
                     total: data.total,
@@ -95,7 +95,7 @@ function App() {
                 const state = await fetchState();
                 console.log('Initial state:', state);
                 setSelectedCount(state.selectedCount || 0);
-                await loadItems(true);
+                await loadItems(true, '');
             } catch (error) {
                 console.error('Initialization failed:', error);
             }
@@ -104,14 +104,14 @@ function App() {
         initApp();
     }, []);
 
-    const handleSearch = useCallback((term) => {
+    const handleSearch = (term) => {
         console.log('Search term changed:', term);
         setSearchTerm(term);
         setItems([]); // Обнуляем список
         setPage(1);
         setHasMore(true);
-        loadItems(true);
-    }, []);
+        loadItems(true, term); // Передаём term напрямую
+    };
 
     const handleSelect = async (id, selected) => {
         try {
@@ -184,7 +184,7 @@ function App() {
                         dataLength={items.length}
                         next={() => {
                             console.log(
-                                'InfiniteScroll: Triggering next, page:',
+                                'InfiniteScroll: triggered, page:',
                                 page,
                                 'hasMore:',
                                 hasMore
@@ -193,7 +193,7 @@ function App() {
                         }}
                         hasMore={hasMore}
                         loader={
-                            <div className="loader">Loading more items...</div>
+                            <div className="loading">Loading more items...</div>
                         }
                         scrollableTarget="scrollable-container"
                         endMessage={
@@ -201,12 +201,9 @@ function App() {
                                 No more items to load
                             </p>
                         }
-                        onScroll={() =>
-                            console.log('InfiniteScroll: Scrolling')
-                        }
                     >
                         {items.length === 0 && !isLoading && searchTerm ? (
-                            <div className="empty-message">
+                            <div className="error-message">
                                 No items match your search
                             </div>
                         ) : items.length === 0 && !isLoading ? (
