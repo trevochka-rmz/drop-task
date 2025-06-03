@@ -56,7 +56,7 @@ function App() {
 
                 // Сбрасываем ключ скролла при новом поиске
                 if (reset) {
-                    setScrollKey((prev) => prev + 1);
+                    // setScrollKey((prev) => prev + 1);
                     console.log('Scroll key reset');
                 }
             } catch (error) {
