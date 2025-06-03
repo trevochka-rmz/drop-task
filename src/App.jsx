@@ -42,6 +42,7 @@ function App() {
                     hasMore: data.hasMore,
                     page: data.page,
                 });
+
                 setItems((prev) => {
                     const newItems = reset
                         ? data.items
@@ -49,6 +50,7 @@ function App() {
                     console.log(`Items updated: ${newItems.length} total`);
                     return newItems;
                 });
+
                 setPage(currentPage + 1);
                 setHasMore(data.hasMore);
                 console.log(
@@ -58,13 +60,15 @@ function App() {
                 );
             } catch (error) {
                 console.error('Failed to load items:', error);
+                // Показываем ошибку пользователю
+                setItems([]); // Очищаем список при ошибке
+                setHasMore(false);
             } finally {
                 setIsLoading(false);
             }
         },
         [page, searchTerm, isLoading]
     );
-
     useEffect(() => {
         console.log('App State Update:', {
             itemsCount: items.length,
@@ -188,8 +192,14 @@ function App() {
                         }
                         scrollableTarget="scrollable-container"
                     >
-                        {items.length === 0 && !isLoading ? (
-                            <div className="empty-message">No items found</div>
+                        {items.length === 0 && !isLoading && searchTerm ? (
+                            <div className="empty-message">
+                                No items match your search
+                            </div>
+                        ) : items.length === 0 && !isLoading ? (
+                            <div className="error-message">
+                                Failed to load items. Please try again.
+                            </div>
                         ) : (
                             items.map((item, index) => (
                                 <div

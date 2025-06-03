@@ -21,11 +21,10 @@
 /* Стили для списка элементов */
 .items-container {
     margin-top: 20px;
-    border: 1px solid #e1e4e8;
-    border-radius: 6px;
-    /* overflow: hidden; */
+    max-height: 60vh; /* Или 500px, подберите под ваш дизайн */
     overflow-y: auto;
-    max-height: 500px;
+    padding: 10px;
+    border: 1px solid #ccc; /* Для отладки */
 }
 
 .item {
@@ -100,14 +99,6 @@
     margin: 5px 0;
 }
 
-.items-container {
-    height: 60vh;
-    overflow-y: auto;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-top: 15px;
-}
-
 /* Добавьте это для визуализации скролла */
 .items-container::-webkit-scrollbar {
     width: 8px;
@@ -124,4 +115,9 @@
 
 .items-container::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+.error-message {
+    padding: 10px;
+    color: red;
+    text-align: center;
 }
