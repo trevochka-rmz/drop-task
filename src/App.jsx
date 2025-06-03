@@ -47,8 +47,20 @@ function App() {
                     const newItems = reset
                         ? data.items
                         : [...prev, ...data.items];
-                    console.log(`Items updated: ${newItems.length} total`);
-                    return newItems;
+                    // Проверяем на дубликаты
+                    const uniqueItems = Array.from(
+                        new Map(
+                            newItems.map((item) => [item.id, item])
+                        ).values()
+                    );
+                    console.log(
+                        `Items updated: ${
+                            uniqueItems.length
+                        } total, duplicates: ${
+                            newItems.length - uniqueItems.length
+                        }`
+                    );
+                    return uniqueItems;
                 });
 
                 setPage(currentPage + 1);
@@ -190,6 +202,7 @@ function App() {
                         loader={
                             <div className="loader">Loading more items...</div>
                         }
+                        scrollableTarget="scrollable-container"
                         endMessage={
                             <p style={{ textAlign: 'center' }}>
                                 No more items to load
