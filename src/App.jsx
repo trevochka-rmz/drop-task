@@ -19,11 +19,11 @@ function App() {
                 return;
             }
 
+            const currentPage = reset ? 1 : page;
             console.log(
-                `Loading items: reset=${reset}, page=${page}, search="${searchTerm}"`
+                `Loading items: reset=${reset}, page=${currentPage}, search="${searchTerm}"`
             );
             setIsLoading(true);
-            const currentPage = reset ? 1 : page;
 
             try {
                 const data = await fetchItems(currentPage, 20, searchTerm);
@@ -96,13 +96,17 @@ function App() {
         initApp();
     }, []);
 
-    const handleSearch = (term) => {
-        console.log('Search term changed:', term);
-        setSearchTerm(term);
-        setPage(1);
-        setHasMore(true);
-        loadItems(true);
-    };
+    const handleSearch = useCallback(
+        (term) => {
+            console.log('Search term changed:', term);
+            if (term === searchTerm) return; // Избегаем повторных вызовов
+            setSearchTerm(term);
+            setPage(1);
+            setHasMore(true);
+            loadItems(true);
+        },
+        [searchTerm]
+    );
 
     const handleSelect = async (id, selected) => {
         try {
@@ -127,13 +131,12 @@ function App() {
                 {isLoading && <span>Loading...</span>}
             </div>
             <div className="debug-info">
-                <p>Loaded: {items.length} items</p>
+                <p>Items: {items.length}</p>
                 <p>Search: "{searchTerm}"</p>
-                <p>Selected: {selectedCount}</p>
-                <p>Has more: {hasMore.toString()}</p>
+                <p>Page: {page}</p>
+                <p>HasMore: {hasMore.toString()}</p>
             </div>
             <SearchBar onSearch={handleSearch} />
-
             <div id="scrollable-container" className="items-container">
                 <InfiniteScroll
                     dataLength={items.length}
@@ -162,7 +165,7 @@ function App() {
                         </div>
                     ) : items.length === 0 && !isLoading ? (
                         <div className="error-message">
-                            Failed to load items. Please try again.
+                            Failed to load items.
                         </div>
                     ) : (
                         items.map((item) => (

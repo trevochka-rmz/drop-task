@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './SearchBar.css';
 
-const SearchBar = ({ onSearch }) => {
+function SearchBar({ onSearch }) {
     const [inputValue, setInputValue] = useState('');
 
     useEffect(() => {
@@ -9,7 +9,7 @@ const SearchBar = ({ onSearch }) => {
         const timer = setTimeout(() => {
             console.log('Debounced search:', inputValue);
             onSearch(inputValue);
-        }, 300);
+        }, 500); // Увеличил до 500ms
 
         return () => {
             console.log('Clearing search timeout');
@@ -58,6 +58,6 @@ const SearchBar = ({ onSearch }) => {
             </button>
         </form>
     );
-};
+}
 
 export default SearchBar;
