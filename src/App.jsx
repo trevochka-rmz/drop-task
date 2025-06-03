@@ -201,7 +201,6 @@ function App() {
                         loader={
                             <div className="loader">Loading more items...</div>
                         }
-                        // Убираем scrollableTarget для теста
                         endMessage={
                             <p style={{ textAlign: 'center' }}>
                                 No more items to load
@@ -209,7 +208,7 @@ function App() {
                         }
                         onScroll={() =>
                             console.log('InfiniteScroll: Scrolling')
-                        } // Отладка скролла
+                        }
                     >
                         {items.length === 0 && !isLoading && searchTerm ? (
                             <div className="empty-message">

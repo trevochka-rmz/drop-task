@@ -21,6 +21,7 @@ const SearchBar = ({ onSearch }) => {
 
     useEffect(() => {
         console.log('Triggering search for:', debouncedValue);
+        if (debouncedValue !== inputValue) return;
         onSearch(debouncedValue);
     }, [debouncedValue, onSearch]);
 

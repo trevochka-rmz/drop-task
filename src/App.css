@@ -1,7 +1,7 @@
 /* Основные стили приложения */
 .app-container {
     max-width: 1200px;
-
+    overflow: visible;
     margin: 0 auto;
     padding: 20px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -34,7 +34,8 @@
     border-bottom: 1px solid #e1e4e8;
     background-color: white;
     transition: all 0.2s ease;
-    min-height: 40px; /* Гарантируем минимальную высоту для прокрутки */
+    min-height: 50px; /* Увеличиваем высоту для прокрутки */
+    font-size: 16px; /* Увеличиваем текст для видимости */
 }
 
 .item:hover {
