@@ -47,7 +47,6 @@ function App() {
                     const newItems = reset
                         ? data.items
                         : [...prev, ...data.items];
-                    // Проверяем на дубликаты
                     const uniqueItems = Array.from(
                         new Map(
                             newItems.map((item) => [item.id, item])
@@ -58,7 +57,7 @@ function App() {
                             uniqueItems.length
                         } total, duplicates: ${
                             newItems.length - uniqueItems.length
-                        }`
+                        }, reset: ${reset}`
                     );
                     return uniqueItems;
                 });
@@ -168,7 +167,7 @@ function App() {
 
     return (
         <div className="app-container">
-            <h1>Items List (1-1,000,000)</h1>
+            <h1>Items List (1 - 1,000,000)</h1>
             <div className="status-bar">
                 <span>Selected: {selectedCount}</span>
                 <span>Loaded: {items.length}</span>
@@ -202,12 +201,15 @@ function App() {
                         loader={
                             <div className="loader">Loading more items...</div>
                         }
-                        scrollableTarget="scrollable-container"
+                        // Убираем scrollableTarget для теста
                         endMessage={
                             <p style={{ textAlign: 'center' }}>
                                 No more items to load
                             </p>
                         }
+                        onScroll={() =>
+                            console.log('InfiniteScroll: Scrolling')
+                        } // Отладка скролла
                     >
                         {items.length === 0 && !isLoading && searchTerm ? (
                             <div className="empty-message">
